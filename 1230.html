@@ -1,0 +1,111 @@
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no" />
+		<title>ArcGIS API for JavaScript Tutorials: Display a map</title>
+
+		<style>
+			html,
+			body,
+			#viewDiv {
+				padding: 0;
+				margin: 0;
+				height: 100%;
+				width: 100%;
+			}
+		</style>
+
+		<link rel="stylesheet" href="https://js.arcgis.com/4.24/esri/themes/light/main.css">
+		<script src="https://js.arcgis.com/4.24/"></script>
+
+		<script>
+			require(["esri/config", "esri/Map", "esri/views/MapView", "esri/widgets/Locate",
+				"esri/widgets/Track", "esri/Graphic", "esri/widgets/Search", "esri/layers/MapImageLayer",
+				"esri/widgets/BasemapToggle", "esri/widgets/BasemapGallery", "esri/widgets/LayerList",
+				"esri/layers/FeatureLayer","esri/layers/GeoJSONLayer"
+			], function(esriConfig, Map, MapView, Locate, Track, Graphic, Search, MapImageLayer, BasemapToggle,
+				BasemapGallery, LayerList, FeatureLayer, GeoJSONLayer) {
+
+				esriConfig.apiKey =
+					"AAPK449340f85b664e6b802d2d0e65eb4849vlSII8YqKpEj5Fn0hCy2qr4QyOAZRZSB6XWDc2-X8pFlNoRYoQoetUvFs1Y_JVKL";
+
+				const map = new Map({
+					basemap: "arcgis-topographic" // Basemap layer service
+				});
+
+				const view = new MapView({
+					map: map,
+					center: [114.340, 30.582], // Longitude, latitude
+					zoom: 5, // Zoom level
+					container: "viewDiv" // Div element
+				});
+
+				const locate = new Locate({
+					view: view,
+					useHeadingEnabled: false,
+					goToOverride: function(view, options) {
+						options.target.scale = 1500;
+						return view.goTo(options.target);
+					}
+				});
+
+
+				const track = new Track({
+					view: view,
+					graphic: new Graphic({
+						symbol: {
+							type: "simple-marker",
+							size: "12px",
+							color: "green",
+							outline: {
+								color: "#efefef",
+								width: "1.5px"
+							}
+						}
+					}),
+					useHeadingEnabled: false
+				});
+				view.ui.add(locate, "top-left")
+
+				const search = new Search({
+					view: view
+				});
+				view.ui.add(search, "top-right");
+
+				const basemapToggle = new BasemapToggle({
+					view: view,
+					nextBasemap: "arcgis-imagery"
+				});
+				view.ui.add(basemapToggle, "bottom-right");
+				
+				const layer_2022 = new FeatureLayer({
+				    url: "https://sampleserver6.arcgisonline.com/arcgis/rest/services/Earthquakes_Since1970/FeatureServer/0",
+				    popupTemplate:{title:"{magnitude}"}
+				});
+				map.add(layer_2022);
+				
+				var layer_huanggang = new GeoJSONLayer({
+					url: "https://geo.datav.aliyun.com/areas_v3/bound/421100_full.json",					
+				});
+				map.add(layer_huanggang);
+				
+				const geojsonLayer = new GeoJSONLayer({
+				  url: "https://cxqttkl.github.io/web4gis15/china_simplify.json",
+				});
+				map.add(geojsonLayer);
+				let layerList = new LayerList({
+					view: view
+				});
+				view.ui.add(layerList, {
+					position: "bottom-left"
+				});
+
+				
+			});
+		</script>
+
+	</head>
+	<body>
+		<div id="viewDiv"></div>
+	</body>
+</html>
