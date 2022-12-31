@@ -90,6 +90,11 @@
 					
 				});
 				map.add(layer_huanggang);
+				
+				const geojsonLayer = new GeoJSONLayer({
+       				 url: "https://cxqttkl.github.io/web4gis15/china_simplify.json",
+      				});
+				map.add(geojsonLayer);
 
 				let layerList = new LayerList({
 					view: view
